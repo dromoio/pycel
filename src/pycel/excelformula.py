@@ -32,7 +32,7 @@ from pycel.excelutil import (
     uniqueify,
 )
 from pycel.lib.function_helpers import load_functions
-from pycel.lib.function_info import func_status_msg
+from pycel.lib.function_info import func_status_msg, all_excel_functions
 
 
 ADDR_FUNCS_NAMES = '_R_', '_C_', '_REF_'
@@ -432,6 +432,8 @@ class FunctionNode(ASTNode):
         handler = getattr(self, f'func_{func}', None)
         if handler is not None:
             return handler()
+        elif func.upper() not in all_excel_functions:
+            raise ValueError(f"Unknown excel function {func}")
         else:
             # map to the correct name
             return f"{self.func_map.get(func, func)}({self.comma_join_emit()})"
